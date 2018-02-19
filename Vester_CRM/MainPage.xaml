@@ -7,7 +7,25 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150"></RowDefinition>
+                <RowDefinition Height="150"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid x:Name="Grid_Button_Account" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF383838">
+                <Button x:Name="Button_Account" Content="СЧЕТ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFE0E0E0"/>
+            </Grid>
 
+        </Grid>
+        <Grid x:Name="Grid_Main_Account" Grid.Column="1" Grid.Row="1" Background="#FF383838" Visibility="Visible">
+            <Button x:Name="Button_Extract_Account" Content="ДОБАВИТЬ ВЫПИСКУ" HorizontalAlignment="Left" Margin="70,31,0,0" VerticalAlignment="Top" Foreground="#FFE0E0E0" Click="Button_Extract_Account_Click"/>
+            <TextBlock x:Name="Text_Start_Date_Extract"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,80,0,0" Text="TextBlock" TextWrapping="Wrap" Foreground="#FFE0E0E0"/>
+        </Grid>
     </Grid>
 </Page>
