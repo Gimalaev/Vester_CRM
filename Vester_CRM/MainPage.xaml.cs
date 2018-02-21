@@ -14,8 +14,11 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-//using SQLite;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
+
+using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite.Internal;
+
 
 namespace Vester_CRM
 {
@@ -31,9 +34,24 @@ namespace Vester_CRM
         {
             this.InitializeComponent();
 
-  //          var db = new SQLiteConnection("filename.db", true);
-            // do your work here
-            //db.Dispose();
+
+          //  this.Suspending += OnSuspending;
+            SqliteEngine.UseWinSqlite3(); //Configuring library to use SDK version of SQLite
+            using (SqliteConnection db = new SqliteConnection("Filename=sqliteSample.db"))
+            {
+                db.Open();
+                String tableCommand = "CREATE TABLE IF NOT EXISTS MyTable (Primary_Key INTEGER PRIMARY KEY AUTOINCREMENT, Text_Entry NVARCHAR(2048) NULL)";
+                SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+                try
+                {
+                    createTable.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    //Do nothing
+                }
+            }
+
         }
 
         private async void Button_Extract_Account_Click(object sender, RoutedEventArgs e)
