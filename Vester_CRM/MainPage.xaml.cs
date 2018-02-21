@@ -15,8 +15,14 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 
-using Microsoft.Data.Sqlite;
-using Microsoft.Data.Sqlite.Internal;
+//using Microsoft.Data.Sqlite;
+//using Microsoft.Data.Sqlite.Internal;
+
+
+//using System.Data.Common;
+
+using SQLite;
+//using SQLitePCL;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
 
@@ -26,15 +32,17 @@ namespace Vester_CRM
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
     /// string path;
-
+    
 
     public sealed partial class MainPage : Page
     {
+        
+
         public MainPage()
         {
             this.InitializeComponent();
 
-            Grab_Entries();
+ //           Grab_Entries();
         }
 
         private async void Button_Extract_Account_Click(object sender, RoutedEventArgs e)
@@ -57,8 +65,7 @@ namespace Vester_CRM
                 Text_Start_Date_Extract.Text = line;
                 //System.Diagnostics.Debug.WriteLine(line);
             }
-
-            using (SqliteConnection db = new SqliteConnection("Data Source=filename.db"))
+          /*  using (SqliteConnection db = new SqliteConnection(string.Format("Data Source={0};", @"D:\sqliteSample.db")))
             {
                 db.Open();
 
@@ -80,12 +87,15 @@ namespace Vester_CRM
                 }
                 db.Close();
             }
-            Output.ItemsSource = Grab_Entries();
+            Output.ItemsSource = Grab_Entries();*/
         }
-        private List<String> Grab_Entries()
+  /*      private List<String> Grab_Entries()
         {
             List<String> entries = new List<string>();
-            using (SqliteConnection db = new SqliteConnection("Data Source=filename.db"))
+        //
+        //  const string databaseName = @"D:\test.db";
+        // using (SqliteConnection db = new SqliteConnection(string.Format("Data Source={0};", databaseName))
+        using (SqliteConnection db = new SqliteConnection("Filename=sqliteSample.db"))
             {
                 db.Open();
                 SqliteCommand selectCommand = new SqliteCommand("SELECT Text_Entry from MyTable", db);
@@ -106,6 +116,13 @@ namespace Vester_CRM
                 db.Close();
             }
             return entries;
+        }
+        */
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            var db = new SQLiteConnection("bd_vester.db", true);
+            // do your work here
+            db.Dispose();
         }
     }
 }
