@@ -14,7 +14,10 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-//using SQLite;
+
+using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite.Internal;
+
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
 
 namespace Vester_CRM
@@ -31,9 +34,7 @@ namespace Vester_CRM
         {
             this.InitializeComponent();
 
-  //          var db = new SQLiteConnection("filename.db", true);
-            // do your work here
-            //db.Dispose();
+            Grab_Entries();
         }
 
         private async void Button_Extract_Account_Click(object sender, RoutedEventArgs e)
@@ -48,7 +49,7 @@ namespace Vester_CRM
             openPicker.FileTypeFilter.Add(".txt");
             var file = await openPicker.PickSingleFileAsync();
             var lines = await Windows.Storage.FileIO.ReadLinesAsync(file);
-
+            //еук
             foreach (var line in lines)
             {
                 // Строки будут выводиться в окне Output Visual Studio
@@ -57,7 +58,54 @@ namespace Vester_CRM
                 //System.Diagnostics.Debug.WriteLine(line);
             }
 
+            using (SqliteConnection db = new SqliteConnection("Data Source=filename.db"))
+            {
+                db.Open();
 
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                //Use parameterized query to prevent SQL injection attacks
+                insertCommand.CommandText = "INSERT INTO MyTable VALUES (NULL, @Entry);";
+                insertCommand.Parameters.AddWithValue("@Entry", Text_Start_Date_Extract.Text);
+
+                try
+                {
+                    insertCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    //Handle error
+                    return;
+                }
+                db.Close();
+            }
+            Output.ItemsSource = Grab_Entries();
+        }
+        private List<String> Grab_Entries()
+        {
+            List<String> entries = new List<string>();
+            using (SqliteConnection db = new SqliteConnection("Data Source=filename.db"))
+            {
+                db.Open();
+                SqliteCommand selectCommand = new SqliteCommand("SELECT Text_Entry from MyTable", db);
+                SqliteDataReader query;
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    //Handle error
+                    return entries;
+                }
+                while (query.Read())
+                {
+                    entries.Add(query.GetString(0));
+                }
+                db.Close();
+            }
+            return entries;
         }
     }
 }
