@@ -195,8 +195,29 @@ namespace Vester_CRM
     }
 
 
+
     public sealed partial class MainPage : Page
     {
+        private Common.Prg_Par param;
+        private string param_filename="prg.ini";
+
+        public async System.Threading.Tasks.Task InitPrg()
+        {
+        // param.SmenaHour = 0;
+        // param.SmenaMinute = 0;
+        // param.SmenaNum = 0;
+        //  
+            try
+            {
+                await param.OpenPrgFile(param_filename);
+            }
+            catch
+            {
+                await param.SavePrgFile(param_filename);
+            }
+        }
+
+
         private void Company_To_List()
         {
             var db = new SQLiteConnection("bd_vester.db", true);
@@ -242,11 +263,34 @@ namespace Vester_CRM
         }
 
 
+
         public MainPage()
         {
             this.InitializeComponent();
+            param = new Common.Prg_Par();
+            //           Grab_Entries();
+        }
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            await InitPrg();
 
- //           Grab_Entries();
+            PathToBase.Text = param.path;
+
+            // Windows.Storage.StorageFolder storageFolder = @"D:\temp";
+
+            //true для добавления данных в файл. false Перезаписать файл. Если указанный файл не существует, этот параметр не действует и конструктор создает новый файл.
+
+
+
+            var db = new SQLiteConnection("bd_vester.db", true);
+            db.DropTable<Payment>();
+            db.CreateTable<Payment>();
+            db.CreateTable<Company>();
+            Make_Company();
+            db.Dispose();
+            Company_To_List();
+
+
         }
 
 
@@ -494,35 +538,26 @@ namespace Vester_CRM
             db.Dispose();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            var db = new SQLiteConnection("bd_vester.db", true);
-            //db.DropTable<Payment>();
-            db.CreateTable<Payment>();
-            db.CreateTable<Company>();
-            Make_Company();
-            db.Dispose();
-            Company_To_List();
-
-
-        }
 
         private void Button_Company_Click(object sender, RoutedEventArgs e)
         {
             Grid_Main_Company.Visibility = Visibility.Visible;
             Grid_Main_Account.Visibility = Visibility.Collapsed;
+            Grid_Main_Settings.Visibility = Visibility.Collapsed;
         }
 
         private void Button_Account_Click(object sender, RoutedEventArgs e)
         {
             Grid_Main_Company.Visibility = Visibility.Collapsed;
             Grid_Main_Account.Visibility = Visibility.Visible;
+            Grid_Main_Settings.Visibility = Visibility.Collapsed;
 
         }
         private void Button_Settings_Click(object sender, RoutedEventArgs e)
         {
             Grid_Main_Company.Visibility = Visibility.Collapsed;
-            Grid_Main_Account.Visibility = Visibility.Visible;
+            Grid_Main_Account.Visibility = Visibility.Collapsed;
+            Grid_Main_Settings.Visibility = Visibility.Visible;
 
         }
 
@@ -585,27 +620,9 @@ namespace Vester_CRM
                 // StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
                 // OutputTextBlock.Text = "Picked folder: " + folder.Name;
                 PathToBase.Text = folder.Path;
+                param.path = folder.Path;
+                await param.SavePrgFile(param_filename);
 
-                string path = @"d:\temp\MyTest.txt";
-
-                // This text is added only once to the file.
-                if (!File.Exists(path))
-                {
-                    // Create a file to write to.
-                    string createText = "Hello and Welcome" + Environment.NewLine;
-                    File.WriteAllText(path, createText, Encoding.UTF8);
-                }
-
-                // This text is always added, making the file longer over time
-                // if it is not deleted.
-                string appendText = "This is extra text" + Environment.NewLine;
-                File.AppendAllText(path, appendText, Encoding.UTF8);
-
-                // Open the file to read from.
-                string readText = File.ReadAllText(path);
-                Console.WriteLine(readText);
-
-                // StorageFile sampleFile = await localFolder.CreateFileAsync("dataFile.txt", CreationCollisionOption.ReplaceExisting);
             }
             else
             {
