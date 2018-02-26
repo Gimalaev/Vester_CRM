@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using Windows.Storage;
+using System.Text;
 
 //using Microsoft.Data.Sqlite;
 //using Microsoft.Data.Sqlite.Internal;
@@ -28,11 +29,21 @@ using SQLite;
 
 namespace Vester_CRM
 {
+   
+
+
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
     /// string path;
+    class Settings
+    {
+        [PrimaryKey, AutoIncrement, Unique]
+        public int Id { get; set; }
+        [MaxLength(255)]
+        public string Путь { get; set; }
 
+    }
     class Payment
     {
         [PrimaryKey, AutoIncrement, Unique]
@@ -93,13 +104,143 @@ namespace Vester_CRM
         public string ВидПлатежа { get; set; }
         [MaxLength(3)]
         public string ВидОплаты { get; set; }
+        public void Empty()
+        {
+            НазначениеПлатежа = null;
+            Дата = null;
+            ПлательщикСчет = null;
+            ДатаСписано = null;
+            ДатаПоступило = null;
+            ПлательщикИНН = null;
+            ПлательщикКПП = null;
+            Плательщик1 = null;
+            Плательщик2 = null;
+            ПлательщикРасчСчет = null;
+            ПлательщикБанк1 = null;
+            ПлательщикБанк2 = null;
+            ПлательщикБИК = null;
+            ПлательщикКорсчет = null;
+            ПолучательСчет = null;
+            ПолучательИНН = null;
+            ПолучательКПП = null;
+            Получатель1 = null;
+            Получатель2 = null;
+            ПолучательРасчСчет = null;
+            ПолучательБанк2 = null;
+            ПолучательБанк1 = null;
+            ПолучательБИК = null;
+            ПолучательКорсчет = null;
+            ВидПлатежа = null;
+            ВидОплаты = null;
+        }
+
+    }
+    class Company
+    {
+      //  [AutoIncrement, Unique]
+       // public int Id { get; set; }
+        [PrimaryKey, Unique, NotNull, MaxLength(50)]
+        public string Название1 { get; set; }
+        [MaxLength(50)]
+        public string Название2 { get; set; }
+        [MaxLength(30)]
+        public string ИНН { get; set; }
+        [MaxLength(15)]
+        public string КПП { get; set; }
+        [MaxLength(50)]
+        public string РасчСчет { get; set; }
+        [MaxLength(50)]
+        public string Банк1 { get; set; }
+        [MaxLength(50)]
+        public string Банк2 { get; set; }
+        [MaxLength(15)]
+        public string БИК { get; set; }
+        [MaxLength(30)]
+        public string Корсчет { get; set; }
+        [MaxLength(50)]
+        public string Телефон { get; set; }
+        [MaxLength(50)]
+        public string Мыло { get; set; }
+        [MaxLength(150)]
+        public string ЮрАдрес { get; set; }
+        [MaxLength(150)]
+        public string ФактАдрес { get; set; }
+
+        [MaxLength(50)]
+        public string КонтЛицоИмя { get; set; }
+        [MaxLength(50)]
+        public string КонтЛицоТелефон { get; set; }
+        [MaxLength(50)]
+        public string КонтЛицоМыло { get; set; }
+        public void Empty()
+        {
+            Название1 = null;
+            Название1 = null;
+            ИНН = null;
+            КПП = null;
+            РасчСчет = null;
+            Банк1 = null;
+            Банк2 = null;
+            БИК = null;
+            Корсчет = null;
+            Телефон = null;
+            Мыло = null;
+            ЮрАдрес = null;
+            ФактАдрес = null;
+            КонтЛицоИмя = null;
+            КонтЛицоТелефон = null;
+            КонтЛицоМыло = null;
+        }
 
     }
 
 
     public sealed partial class MainPage : Page
     {
-        
+        private void Company_To_List()
+        {
+            var db = new SQLiteConnection("bd_vester.db", true);
+            var company = new Company();
+            var pm2 = db.Table<Company>();
+            foreach (var comp in pm2)
+            {
+                List_Company_Name.Items.Add(comp.Название1);
+            }
+            db.Dispose();
+
+        }
+        private void Make_Company()
+        {
+            var db = new SQLiteConnection("bd_vester.db", true);
+            var pm = new Payment();
+            var company = new Company();
+            var pm2 = db.Table<Payment>();
+            //  var cm2 = db.Table<Company>();
+            bool fl = true;
+
+
+            foreach (var payment in pm2)
+            {
+
+                if (payment.ДатаПоступило != null)
+                {
+                    company.Название1 = payment.Плательщик1;
+                    company.Название2 = payment.Плательщик2;
+                    company.ИНН = payment.ПлательщикИНН;
+                    company.КПП = payment.ПлательщикКПП;
+                    company.РасчСчет = payment.ПлательщикРасчСчет;
+                    company.Банк1 = payment.ПлательщикБанк1;
+                    company.Банк2 = payment.ПлательщикБанк2;
+                    company.БИК = payment.ПлательщикБИК;
+                    company.Корсчет = payment.ПлательщикКорсчет;
+                    if (fl) db.InsertOrReplace(company);
+                    company.Empty();
+
+                }
+            }
+            db.Dispose();
+        }
+
 
         public MainPage()
         {
@@ -107,6 +248,9 @@ namespace Vester_CRM
 
  //           Grab_Entries();
         }
+
+
+
 
         private async void Button_Extract_Account_Click(object sender, RoutedEventArgs e)
         {
@@ -160,7 +304,6 @@ namespace Vester_CRM
                     {
                         s = line.Replace("Сумма=", "");
                         s = s.Replace(".", ",");
-                        Output.Items.Add(s);
                         pm.Сумма = Convert.ToDouble(s);
                     }
                     z = line.Contains("ПлательщикСчет=");
@@ -174,14 +317,14 @@ namespace Vester_CRM
                     {
                         s = line.Replace("ДатаСписано=", "");
                         pm.ДатаСписано = s;
-                        fr += pm.Сумма;
+                        if (s!="") fr += pm.Сумма;
                     }
                     z = line.Contains("ДатаПоступило=");
                     if (z)
                     {
                         s = line.Replace("ДатаПоступило=", "");
                         pm.ДатаПоступило = s;
-                        summ += pm.Сумма;
+                        if (s != "") summ += pm.Сумма;
 
                     }
                     z = line.Contains("ПлательщикИНН=");
@@ -329,13 +472,17 @@ namespace Vester_CRM
                         // if (isThere==false)
                         var pm2 = db.Table<Payment>();
                         bool fl = true;
-                     //    foreach (var payment in pm2)
-                     //     {
+                        pm.НазначениеПлатежа += " Номер:" + pm.Номер;
+
+                            foreach (var payment in pm2)
+                             {
                             // if ((payment.НазначениеПлатежа == pm.НазначениеПлатежа) && (!payment.НазначениеПлатежа.Contains("Аванс")) &&(!payment.НазначениеПлатежа.Contains("НДФЛ за")) && (!payment.НазначениеПлатежа.Contains("Заработная"))) fl = false;
-                           //fl = false;
-                     //   }
+                            if ((payment.НазначениеПлатежа == pm.НазначениеПлатежа)) fl = false;
+                           }
 
                         if (fl) db.Insert(pm);
+                        pm.Empty();
+                        
                         i++;
                     }
                     
@@ -350,9 +497,120 @@ namespace Vester_CRM
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             var db = new SQLiteConnection("bd_vester.db", true);
-//            db.DropTable<Payment>();
+            //db.DropTable<Payment>();
             db.CreateTable<Payment>();
+            db.CreateTable<Company>();
+            Make_Company();
             db.Dispose();
+            Company_To_List();
+
+
+        }
+
+        private void Button_Company_Click(object sender, RoutedEventArgs e)
+        {
+            Grid_Main_Company.Visibility = Visibility.Visible;
+            Grid_Main_Account.Visibility = Visibility.Collapsed;
+        }
+
+        private void Button_Account_Click(object sender, RoutedEventArgs e)
+        {
+            Grid_Main_Company.Visibility = Visibility.Collapsed;
+            Grid_Main_Account.Visibility = Visibility.Visible;
+
+        }
+        private void Button_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            Grid_Main_Company.Visibility = Visibility.Collapsed;
+            Grid_Main_Account.Visibility = Visibility.Visible;
+
+        }
+
+        private void List_Company_Name_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (List_Company_Name.SelectedIndex!=-1)
+            {
+
+                var db = new SQLiteConnection("bd_vester.db", true);
+                  var cm = db.Get<Company>(List_Company_Name.SelectedItem);
+
+                if (cm.Название1 != null) Название1.Text = cm.Название1;
+                else Название1.Text = "";
+                if (cm.Название2 != null) Название2.Text = cm.Название2;
+                else Название2.Text = "";
+                if (cm.ИНН != null) ИНН.Text = cm.ИНН;
+                else ИНН.Text = "";
+                if (cm.КПП != null) КПП.Text = cm.КПП;
+                else КПП.Text = "";
+                if (cm.РасчСчет != null) РасчСчет.Text = cm.РасчСчет;
+                else РасчСчет.Text = "";
+                if (cm.Банк1 != null) Банк1.Text = cm.Банк1;
+                else Банк1.Text = "";
+                if (cm.Банк2 != null) Банк2.Text = cm.Банк2;
+                else Банк2.Text = "";
+                if (cm.БИК != null) БИК.Text = cm.БИК;
+                else БИК.Text = "";
+                if (cm.Корсчет != null) Корсчет.Text = cm.Корсчет;
+                else Корсчет.Text = "";
+                if (cm.Телефон != null) Телефон.Text = cm.Телефон;
+                else Телефон.Text = "";
+                if (cm.Мыло != null) Мыло.Text = cm.Мыло;
+                else Мыло.Text = "";
+                if (cm.ФактАдрес != null) ФактАдрес.Text = cm.ФактАдрес;
+                else ФактАдрес.Text = "";
+                if (cm.ЮрАдрес != null) ЮрАдрес.Text = cm.ЮрАдрес;
+                else ЮрАдрес.Text = "";
+                if (cm.КонтЛицоИмя != null) КонтЛицоИмя.Text = cm.КонтЛицоИмя;
+                else КонтЛицоИмя.Text = "";
+                if (cm.КонтЛицоТелефон != null) КонтЛицоТелефон.Text = cm.КонтЛицоТелефон;
+                else КонтЛицоТелефон.Text = "";
+                if (cm.КонтЛицоМыло != null) КонтЛицоМыло.Text = cm.КонтЛицоМыло;
+                else КонтЛицоМыло.Text = "";
+
+
+                db.Dispose();
+            }
+        }
+
+        private async void Button_PathToBase_Click(object sender, RoutedEventArgs e)
+        {
+            FolderPicker folderPicker = new FolderPicker();
+            folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+            folderPicker.FileTypeFilter.Add(".txt");
+
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                // Application now has read/write access to all contents in the picked folder (including other sub-folder contents)
+                // StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+                // OutputTextBlock.Text = "Picked folder: " + folder.Name;
+                PathToBase.Text = folder.Path;
+
+                string path = @"d:\temp\MyTest.txt";
+
+                // This text is added only once to the file.
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    string createText = "Hello and Welcome" + Environment.NewLine;
+                    File.WriteAllText(path, createText, Encoding.UTF8);
+                }
+
+                // This text is always added, making the file longer over time
+                // if it is not deleted.
+                string appendText = "This is extra text" + Environment.NewLine;
+                File.AppendAllText(path, appendText, Encoding.UTF8);
+
+                // Open the file to read from.
+                string readText = File.ReadAllText(path);
+                Console.WriteLine(readText);
+
+                // StorageFile sampleFile = await localFolder.CreateFileAsync("dataFile.txt", CreationCollisionOption.ReplaceExisting);
+            }
+            else
+            {
+               // OutputTextBlock.Text = "Operation cancelled.";
+            }
         }
     }
 }

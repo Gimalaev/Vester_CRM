@@ -5,9 +5,10 @@
     xmlns:local="using:Vester_CRM"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d" MaxHeight="750" MaxWidth="1000" Loaded="Page_Loaded"
+    Height="750" Width="1000">
 
-    <Grid>
+    <Grid MaxHeight="750" MaxWidth="1000">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
@@ -16,25 +17,83 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="150"></RowDefinition>
                 <RowDefinition Height="150"></RowDefinition>
+                <RowDefinition Height="150"></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <Grid x:Name="Grid_Button_Account" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF383838">
-                <Button x:Name="Button_Account" Content="СЧЕТ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFE0E0E0"/>
+                <Button x:Name="Button_Account" Content="СЧЕТ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFE0E0E0" Click="Button_Account_Click"/>
+            </Grid>
+            <Grid x:Name="Grid_Button_Company" Grid.Column="0" Grid.Row="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF383838">
+                <Button x:Name="Button_Company" Content="КОМПАНИИ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFE0E0E0" Click="Button_Company_Click"/>
+            </Grid>
+            <Grid x:Name="Grid_Button_Settings" Grid.Column="0" Grid.Row="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF383838">
+                <Button x:Name="Button_Settings" Content="НАСТРОЙКИ" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFE0E0E0" Click="Button_Settings_Click"/>
             </Grid>
 
         </Grid>
-        <Grid x:Name="Grid_Main_Account" Grid.Column="1" Grid.Row="1" Background="#FF383838" Visibility="Visible">
+        <Grid x:Name="Grid_Main_Account" Grid.Column="1" Grid.Row="1" Background="#FF383838" Visibility="Collapsed">
             <Button x:Name="Button_Extract_Account" Content="ДОБАВИТЬ ВЫПИСКУ" HorizontalAlignment="Left" Margin="70,31,0,0" VerticalAlignment="Top" Foreground="#FFE0E0E0" Click="Button_Extract_Account_Click"/>
             <TextBlock x:Name="Text_Start_Date_Extract"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="70,80,0,0" Text="TextBlock" TextWrapping="Wrap" Foreground="#FFE0E0E0"/>
-            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,150,0,0">
-                <ListView Name="Output">
+        </Grid>
+        <Grid x:Name="Grid_Main_Settings" Grid.Column="1" Grid.Row="1" Background="#FF383838" Visibility="Visible">
+            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0,50,0,0">
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="15,15,15,15" >
+                    <TextBlock Text="Путь к базе" TextWrapping="Wrap"  Margin="0,5,0,0" />
+                    <TextBox Name="PathToBase" Text="C:\" Margin="0,5,0,0" />
+                    <Button x:Name="Button_PathToBase" Content="Выбрать" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,5,0,0" Click="Button_PathToBase_Click" />
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <Grid x:Name="Grid_Main_Company" Grid.Column="1" Grid.Row="1" Background="#FF383838" Visibility="Collapsed">
+            <ScrollViewer HorizontalAlignment="Left" VerticalAlignment="Stretch"  Margin="0,50,0,0" Width="360">
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="15,15,15,15" >
+                <ListView x:Name="List_Company_Name" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,5,5,5" ItemClick="List_Company_Name_ItemClick" IsDoubleTapEnabled="True" IsHoldingEnabled="False" IsRightTapEnabled="True" IsTapEnabled="True" IsMultiSelectCheckBoxEnabled="False" IsItemClickEnabled="True">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+
                 </ListView>
             </StackPanel>
+            </ScrollViewer>
+            <ScrollViewer HorizontalAlignment="Right" VerticalAlignment="Stretch"  Margin="0,50,0,0" Width="480">
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="15,15,15,15" BorderThickness="2" >
+                    <TextBlock HorizontalAlignment="Left" Text="Название" TextWrapping="Wrap" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                    <TextBox Name="Название1" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0"  Width="370"/>
+                    <TextBox Name="Название2" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="ИНН" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="ИНН"  HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="КПП" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="КПП" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Расч. Счет" TextWrapping="Wrap" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="РасчСчет" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Банк" TextWrapping="Wrap" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="Банк1" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="Банк2" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="БИК" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="БИК" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Кор. Счет" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="Корсчет" HorizontalAlignment="Left" Text="TextBox" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Телефон" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="Телефон" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Email" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="Мыло" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Юр. адрес" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="ЮрАдрес" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Факт. адрес" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="ФактАдрес" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Контакт. лицо" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="КонтЛицоИмя" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="Телефон" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="КонтЛицоТелефон" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBlock HorizontalAlignment="Left" Text="e-mail" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                    <TextBox Name="КонтЛицоМыло" HorizontalAlignment="Left" Text="dasd" VerticalAlignment="Top" Margin="0,5,0,0" Width="370"/>
+                </StackPanel>
+            </ScrollViewer>
+
         </Grid>
+
     </Grid>
 </Page>
